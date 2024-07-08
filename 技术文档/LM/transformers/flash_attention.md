@@ -4,11 +4,22 @@ RMSNorm
 
 RoPE
 
+![image-20240627231254364](flash_attention.assets/image-20240627231254364.png)
 
 
 
+在不损失精度的情况下，通过软硬件协同的方式加速attention。
 
-在不损失精度的情况下，加速attention
+# 简单说
+
+- **背景1**。通过对attention进行分析，发现matmul花费的时间没有那么多，更多的时间是在softmax，mask操作上。为什么呢？原因是GPU的读写速度跟不上计算速度，而这些操作存在反复的读写操作，比如读QK，然后计算得到S，将其写回显存，然后在加载S，计算softmax，得到P，在将P写回显存......。总之，读写操作花费了大量时间。
+- **背景2**。在f16下，训练时数据可能会溢出，需要求出S矩阵每行的最大值，然后减去这个值防止溢出。提出了online softmax，实现分块计算softmax。
+
+如此依赖，对于attention的操作，就可以将其融合fused kernel，减少大量的读写时间。
+
+具体在空间复杂度上，多出每行要存储的max和sum，O(N)，时间换空间。
+
+空间复杂度，
 
 # Motivation
 
@@ -50,12 +61,6 @@ FlashAttention基本上归结为两个主要思想：
 - Tiling（在前向和后向传递中使用）- 简单讲就是将NxN的softmax/分数矩阵划分为块。
 - 重新计算（仅在后向传递中使用 - 如果您熟悉activation/gradient checkpointing，这将很容易理解）。
 
-
-
-# Computer Arch
-
-flash attention涉及到软硬件协同设计。
-
 # Online softmax
 
 attention最核心的三部（忽略scaling和mask）：
@@ -81,6 +86,72 @@ attention最核心的三部（忽略scaling和mask）：
 得到新的计算方式：
 
 ![image-20240624111407482](flash_attention.assets/image-20240624111407482.png)
+
+# 分块softmax
+
+# 算法流程
+
+![image-20240628105103041](flash_attention.assets/image-20240628105103041.png)
+
+其中，5和7的两层循环，图示如下：
+
+![image-20240628121036798](flash_attention.assets/image-20240628121036798.png)
+
+![image-20240628121052478](flash_attention.assets/image-20240628121052478.png)
+
+我们具体以i=2 j=3的块来作为示例，对应算法中的10，假设每块大小为`5x5`：
+
+![image-20240628121442192](flash_attention.assets/image-20240628121442192.png)
+
+![image-20240628120906108](flash_attention.assets/image-20240628120906108.png)
+
+![image-20240628121813262](flash_attention.assets/image-20240628121813262.png)
+
+`mi`包含了在当前块(j=3)之前所有块的最大值(按行)，比如上面的例子，`mi`保存了j=1和j=2(图中的绿色块)块第6~10行的最大值。而`mij~`是上一步10得到的当前块(黄色)的最大值。因此取它们两者的最大值就得到前3个块(绿色加黄色块共15列)的最大值。`li^new`的计算也是类似的，只不过求和前需要用当前的`e^{-mi^new}`修正。
+
+基于上一轮的`li`和`mi`得到新的`li^new`和`mi^new`之后，我们还需要修正之前算出来的注意力分数P。但是上一轮的P已经不在了，而我们有上一轮的`Oi`，所以我们可以直接对`Oi`进行修正（**O_i=P_ij * V_j**）。即12步：
+
+![image-20240628123559678](flash_attention.assets/image-20240628123559678.png)
+
+绿色部分：
+
+将`Oi`乘以`diag(li)`，因为上一轮算`Oi`时，除以了局部sum，然后分子乘以`e^{mi-mi^{new}}`，来修正分子，再除以`diag(li^{new})`，得到`j<3`时的修正值。
+
+黄色部分：
+
+算当前`j=3`的值，也通过修正，得到目前的正确结果。
+
+`diag`的作用是让矩阵的每行都能和`li`相乘
+
+![image-20240628124154018](flash_attention.assets/image-20240628124154018.png)
+
+13步，将新的`li`和`lj`写回HBM。
+
+![image-20240628124503682](flash_attention.assets/image-20240628124503682.png)
+
+
+
+# 复杂度分析
+
+
+
+## 访存
+
+假设序列长度为N，head的维度为d，SRAM的大小是M，并且我们假设d≤M≤Nd。标准的Attention算法需要O(Nd+N2)的HBM 访问，而FlashAttention算法需要Θ(N2d2M−1)的HBM访问。
+
+
+
+# V2版本
+
+![image-20240701150241969](flash_attention.assets/image-20240701150241969.png)
+
+主要是将两个循环颠倒了一下，即外层对Q循环，内层对KV循环。
+
+![image-20240628121052478](flash_attention.assets/image-20240628121052478.png)
+
+也可以用数学符号来表示
+
+![image-20240701151615197](flash_attention.assets/image-20240701151615197.png)
 
 # Flash Attention
 

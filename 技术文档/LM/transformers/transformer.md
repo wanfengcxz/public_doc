@@ -50,8 +50,6 @@ BatchNorm是在一个mini-batch里面，将每一列（即每一个特征）的�
 
 ![image-20240621212619215](transformer.assets/image-20240621212619215.png)
 
-
-
 ## 源码分析
 
 ```python
@@ -89,7 +87,9 @@ class TransformerEncoderLayer(Module):
 
 ```
 
+## 三种mask
 
+![image-20240627133008034](transformer.assets/image-20240627133008034.png)
 
 
 
