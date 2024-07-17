@@ -18,3 +18,7 @@ ssh-keygen -t rsa -b 4096 -C "your github email"
 
 将公钥复制到https://github.com/settings/keys即可
 
+由于配置的是ssh配置，那么在提交代码时，源仓库必须是ssh仓库。如果源仓库是https，需要手动修改。
+```bash
+git remote set-url origin git@github.com:DeepLink-org/deeplink.framework.dev.git
+```
