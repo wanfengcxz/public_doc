@@ -112,3 +112,24 @@ Transformer
 ## 复杂度对比
 
 ![image-20240621204944708](transformer.assets/image-20240621204944708-1718975517796.png) 
+
+# 深度学习模型训练显存占用及DP、MP、PP分布式训练策略
+
+https://ckblogs.cn/posts/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E6%98%BE%E5%AD%98%E5%8D%A0%E7%94%A8%E5%8F%8ADP%E3%80%81MP%E3%80%81PP%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83%E7%AD%96%E7%95%A5.html
+
+## 显存占用分析
+
+模型总内存
+
+```bash
+total_memory = memory_model # 模型的参数
+			+ memory_activations # forward计算时存储的数据
+			+ memory_gradients   # 梯度下降时用到的梯度信息
+```
+
+梯度的个数和参数量大致一致，于是有
+
+```bash
+total_memory = memory_model * 2 + memory_activations        
+```
+

@@ -1,3 +1,21 @@
+# Tmux开启多个终端
+
+```bash
+# 新建会话
+tmux new -s my_session
+
+# 划分左右两个窗格
+tmux split-window -h
+
+# ctrl+b o 切换窗口
+```
+
+# rsync同步文件
+
+```bash
+rsync -n -a -v -c -e "ssh -p 20002" /var/data/* root@101.230.144.220:/root/workspace/data/
+```
+
 # 检测C++程序内存泄漏
 
 使用valgrind来检测内存泄漏
