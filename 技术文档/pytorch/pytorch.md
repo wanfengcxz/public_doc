@@ -128,3 +128,11 @@ autograd是一个反向自动微分系统。从概念上讲，autograd记录了�
 当自定义一个 Python [Function](https://pytorch.org/docs/stable/autograd.html#torch.autograd.Function) 时，我们可以使用`save_for_backward()`在前向传播中保存张量，并使用`saved_tensors`在向后传递期间检索它们。
 
 对于pytorch中定义的operations，例如`torch.pow()`，tensor在需要时会自动保存。我们可以查找以前缀_saved开头的属性来探索某个grad_fn保存了哪些张量。
+
+# cuda backend内存管理
+
+pytorch 支持自定义内存管理器。
+
+https://pytorch.org/docs/stable/notes/cuda.html#memory-management
+
+https://pytorch.org/docs/stable/torch_cuda_memory.html#torch-cuda-memory
