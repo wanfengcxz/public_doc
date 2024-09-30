@@ -1,3 +1,17 @@
+# 基本命令
+
+```bash
+# 在某个分支上向后移动一个 commit
+git reset --hard HEAD~1 # --hard 会丢弃当前工作目录中未提交的更改。
+git reset --soft HEAD~1	
+
+# 将错误提交的代码恢复到未提交的状态
+# 如果没有推送到远程仓库
+git reset HEAD~
+```
+
+
+
 # 配置SSH密钥连接
 
 ```bash
