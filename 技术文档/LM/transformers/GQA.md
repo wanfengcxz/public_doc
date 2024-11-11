@@ -8,7 +8,9 @@
 
 针对这个问题LLaMA2使用GQA，从软件层面解决。
 
+# MHA的计算
 
+![image-20241015151446622](GQA.assets/image-20241015151446622.png)
 
 # MQA
 

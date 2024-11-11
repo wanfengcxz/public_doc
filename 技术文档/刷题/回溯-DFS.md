@@ -83,3 +83,8 @@ auto hash_f = [](const PII&p) {return hash<int>()(p.first) ^ hash<int>()(p.secon
         stk.emplace(0, 0);  // 注意emplace添加pair时不能加{}
 ```
 
+# 括号生成
+
+https://www.nowcoder.com/practice/c9addb265cdf4cdd92c092c655d164ca?tpId=196&tqId=37082&rp=1&ru=/exam/company&qru=/exam/company&sourceUrl=%2Fexam%2Fcompany&difficulty=undefined&judgeStatus=undefined&tags=&title=
+
+中等
