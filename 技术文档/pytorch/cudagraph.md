@@ -1,0 +1,7 @@
+cuda graph允许定义一次然后重复执行多次。将graph的定义和执行分离能够做一些优化：
+
+1. CPU launch开销相比于eager模型减少，因为大部分设置提前完成。
+2. 将整个workflow放到cuda上可以做出eager模式下无法做出的优化。
+
+在stream(eager)模式下，将一个kernel放入stream中时，host驱动需要执行一系列操作来准备kernel在GPU上的执行。这些操作是设置和launch kernel所必须得，都是执行kernel所必须花费的overhead cost。如果一个GPU kernel的执行时间太短，overhead cost可能会在整个端到端执行时间中占过多比重。
+
