@@ -9,6 +9,8 @@ sudo apt install cmake
 
 如果默认安装的版本太低，可以手动去官网下载
 
+https://cmake.org/download/#older
+
 ![image-20240312215208467](cmake.assets/image-20240312215208467.png)
 
 下载.sh文件和压缩包都行

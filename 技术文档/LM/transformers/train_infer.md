@@ -23,7 +23,7 @@ Output: Love that can quickly seize the gentle heart [EOS]
 1. 预填充（Prefill）阶段：输入一个 **prompt 序列**，为每个 transformer 层生成 key cache 和 value cache（KV cache）。
    - 此时，KV Cache 是空的
    - 存在大量的 gemm 操作，推理速度慢
-   - **一串输入生成一个 token**
+   - **一串输入生成一个 token（取最后一个）**
 2. 解码（Generate）阶段：使用并更新 KV cache，一个接一个地生成词，当前生成的词依赖于之前已经生成的词。这样不断反复，直到遇到终止符才停止（或者超过最大的生成长度）。
    - gemm 变为 gemv 操作，推理速度相对较快
    - **一个 token 生成一个 token**

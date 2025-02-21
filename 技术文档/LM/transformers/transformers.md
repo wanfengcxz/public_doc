@@ -70,3 +70,5 @@ LLM如何处理超长序列？一般训练时会固定上下文长度，例如10
 激活函数改为SwiGLU
 
 ![image-20240625184618926](transformers.assets/image-20240625184618926.png)
+
+# Deepseek

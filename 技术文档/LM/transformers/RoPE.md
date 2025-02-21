@@ -42,13 +42,16 @@ RoPE的终极目标即：
 
 ## 代码实现
 
-但是，由于矩阵R是一个稀疏矩阵，直接用矩阵乘法实现会很浪费算力。一般采用加法的方式将相对位置信息加入到q和k中：
+但是，由于矩阵R是一个稀疏矩阵，直接用矩阵乘法实现会很浪费算力。一般采用以下方式将相对位置信息加入到q和k中：
 
 ![image-20240903163054694](RoPE.assets/image-20240903163054694.png)
 
 ![image-20240903163102035](RoPE.assets/image-20240903163102035.png)
 
+pytorch代码中，rope分为两步
 
+- RotaryEmbedding负责生成和保存sin cos张量
+- apply_rotary_pos_emb负责将sin cos和q，k相乘
 
 # 长文本外推
 
