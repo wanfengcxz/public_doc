@@ -89,7 +89,13 @@ attention最核心的三部（忽略scaling和mask）：
 
 # 分块softmax
 
+![image-20250228183607409](flash_attention.assets/image-20250228183607409.png)
+
+![image-20250228184850230](flash_attention.assets/image-20250228184850230.png)
+
 # 算法流程
+
+https://fancyerii.github.io/2023/10/23/flashattention/
 
 ![image-20240628105103041](flash_attention.assets/image-20240628105103041.png)
 
